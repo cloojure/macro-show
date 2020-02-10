@@ -1,26 +1,8 @@
 (ns tst.demo.core
-  (:use tupelo.core tupelo.test)
+  (:use demo.core tupelo.core tupelo.test)
   (:require
     [clojure.string :as str]
     [clojure.pprint :as pprint]))
-
-
-(defmacro let-spyxx
-  "An expression (println ...) for use in threading forms (& elsewhere). Evaluates the supplied
-   expressions, printing both the expression and its value to stdout. Returns the value of the
-   last expression."
-  [& exprs]
-  (let [decls      (xfirst exprs)
-        _          (when (not (even? (count decls)))
-                     (throw (ex-info "spy-let-proc: uneven number of decls:" {:decls decls})))
-        forms      (xrest exprs)
-        fmt-pair   (fn [[dest src]]
-                     [dest src
-                      '_ (list `spyxx dest)]) ; #todo gensym instead of underscore?
-        pairs      (vec (partition 2 decls))
-        r1         (vec (mapcat fmt-pair pairs))
-        final-code `(let ~r1 ~@forms)]
-    final-code))
 
 ; desired output format of...
 (comment
@@ -45,25 +27,30 @@
 ;---------------------------------------------------------------------------------------------------
 
 
-(def curr-ns *ns*)
+(dotest
+  (is= "tst.demo.core" (spyx (current-source-ns)))
+  )
 
 (defn macro-show-impl
   [macro-expr]
   (let [macro-sym       (first macro-expr)
-        macro-impl-sym  (str->sym (str curr-ns "/"
+        macro-sym-fq    `~macro-sym
+        macro-impl-sym  (str->sym (str (current-source-ns) "/"
                                     (sym->str macro-sym) "-impl"))
         macro-args      (rest macro-expr)
         macro-impl-call (list macro-impl-sym `(quote ~(vec macro-args)))
         macro-result    (eval macro-impl-call)]
-    ;(spyx macro-impl-sym)
-    ;(spyx macro-impl-call)
-    ;(spyx macro-result)
+    (spyx macro-impl-sym)
+    (spyx macro-sym-fq)
+    (spyx macro-impl-call)
+    (spyx macro-result)
     macro-result))
 
 (defmacro macro-show
   [macro-expr]
   `(pprint/pprint
     (quote ~(macro-show-impl macro-expr))))
+
 
 (dotest
   (nl) (println :macro-show-impl-output-begin)
