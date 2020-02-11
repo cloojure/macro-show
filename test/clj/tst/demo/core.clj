@@ -45,7 +45,9 @@
         "(if
            (clojure.core/and true false)
            nil
-           (do (println 'forms!') :yeeessssss!))")))
+           (do
+             (println 'forms!')
+             :yeeessssss!))")))
   ; (println :macro-show-done)
 
   (with-out-str ; suppress output during test run

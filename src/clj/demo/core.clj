@@ -5,7 +5,7 @@
 (defn exception-stacktrace-elems
   "Given  an exception, returns a vector of stacktrace elements."
   [exception]
-  (into [] (.getStackTrace exception)))
+  (vec (.getStackTrace exception)))
 
 (defmacro current-source-ns
   "Returns a string containing the namespace where this macro is called"
