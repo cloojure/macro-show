@@ -56,7 +56,7 @@
       (unless false
         (println "forms!")
         :yeeessssss!))
-    (println "  ...done") )
+    (println "  ...done"))
   (is-nonblank= "forms!"
     (with-out-str
       (is= :yeeessssss!

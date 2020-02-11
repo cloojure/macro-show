@@ -22,7 +22,7 @@
 (defn macro-show-impl
   [macro-expr]
   `(do
-     ;(spyxx (quote ~macro-expr))
+     ; (spyxx (quote ~macro-expr))
      (let [macro-sym#                (first (quote ~macro-expr))
            macro-args#               (rest (quote ~macro-expr))
 
@@ -36,15 +36,16 @@
                                            (first)
                                            (.getClassName)
                                            (re-find #"[.\w]+"))))
+           ; xx#                       (spyx macro-callsite-source-ns#)
 
            macro-impl-sym#           (str->sym (str macro-callsite-source-ns# "/"
                                                  (sym->str macro-sym#) "-impl"))
+           ; xx#                       (spyx macro-impl-sym#)
            macro-impl-call#          (list macro-impl-sym# `(quote ~(vec macro-args#)))
-           macro-result#             (->list (eval macro-impl-call#))]
-       ;(spyx current-source-ns#)
-       ;(spyx macro-impl-sym#)
-       ;(spyx macro-impl-call#)
-       ;(spyxx macro-result#)
+           ; xx#                       (spyx macro-impl-call#)
+           macro-result#             (->list (eval macro-impl-call#))
+           ; xx#                       (spyxx macro-result#)
+           ]
        (pprint/pprint macro-result#))))
 
 (defmacro macro-show
